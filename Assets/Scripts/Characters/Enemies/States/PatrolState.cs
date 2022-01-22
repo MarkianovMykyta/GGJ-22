@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-
 using Contexts;
 using Enviroment;
 
@@ -26,7 +25,7 @@ namespace Characters.Enemies.States
 
         public override void Enter()
         {
-            _waypoints = context.WaypointManager.Waypoints;
+            _waypoints = context.WaypointManager.GetWaypointsByCharacter(_enemy).Waypoints;
             _navMeshAgent = _enemy.navMeshAgent;
             _navMeshAgent.destination = _waypoints[_currentWaypointIndex].transform.position;
         }

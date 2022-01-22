@@ -1,33 +1,23 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Characters;
 using UnityEngine;
 
 namespace Enviroment
 {
-    [ExecuteInEditMode]
     public class WaypointManager : MonoBehaviour
     {
-        public List<Waypoint> Waypoints => _waypoints;
+        public CharacterWaypointPair[] _characterWaypoints;
 
-        [SerializeField] private List<Waypoint> _waypoints;
-
-#if UNITY_EDITOR
-        private void OnDrawGizmos()
+        public WaypointPath GetWaypointsByCharacter(Character character)
         {
-            for (int i = 0; i < _waypoints.Count - 1; i++)
+            for (int i = 0; i < _characterWaypoints.Length; i++)
             {
-                Gizmos.color = Color.HSVToRGB((i + 1f) / _waypoints.Count, 1, 1);
-                Gizmos.DrawLine(_waypoints[i].transform.position, _waypoints[i + 1].transform.position);
+                if (_characterWaypoints[i].Character.Equals(character))
+                {
+                    return _characterWaypoints[i].Path;
+                }
             }
 
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(_waypoints[_waypoints.Count - 1].transform.position, _waypoints[0].transform.position);
+            throw new System.Exception($"Not way for this character {character}");
         }
-
-        private void Update()
-        {
-            _waypoints = GetComponentsInChildren<Waypoint>().ToList();
-        }
-#endif
     }
 }

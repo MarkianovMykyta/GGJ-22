@@ -1,4 +1,6 @@
 ﻿using Enviroment;
+using Souls;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -8,5 +10,6 @@ namespace Contexts
     {
         public WaypointManager WaypointManager;
         public GameObject Target;
+        public SoulManager SoulManager;
     }
 }

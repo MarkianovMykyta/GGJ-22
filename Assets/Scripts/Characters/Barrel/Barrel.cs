@@ -8,9 +8,6 @@ namespace Characters.Barrel
     {
         [SerializeField] private BarrelState _currentState;
 
-        private IdleState _idle;
-        private ChaseState _chase;
-
         public BarrelState CurrentState
         {
             get
@@ -23,13 +20,9 @@ namespace Characters.Barrel
             }
         }
 
-
         private void Start()
         {
-            _idle = new IdleState(this, stateMachine, context);
-            _chase = new ChaseState(this, stateMachine, context);
-
-            stateMachine.Initialize(_idle);
+            stateMachine.Initialize(new IdleState(this, stateMachine, context));
         }
     }
 }
