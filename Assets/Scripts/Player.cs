@@ -8,14 +8,17 @@ public class Player : MonoBehaviour
 	[SerializeField] private float _stopSpeed;
 	[SerializeField] private float _gravityForce;
 	[SerializeField] private float _jumpForce;
+	[SerializeField] private float _minSlideAngle;
+	[SerializeField] private float _slideForce;
 	[SerializeField] private Transform _head;
 
 	private Rigidbody _rigidbody;
 	private PlayerInputActions _playerInputActions;
-
+	
 	private float _distanceToGround;
 
 	private bool IsTouchingGround => _distanceToGround <= _playerHeight;
+	private bool _isSliding;
 
 	private void Awake()
 	{
@@ -36,11 +39,12 @@ public class Player : MonoBehaviour
 
 		Move(Time.fixedDeltaTime);
 		ApplyGravity(Time.fixedDeltaTime);
+		Slide(Time.fixedDeltaTime);
 	}
 
 	private void ApplyGravity(float deltaTime)
 	{
-		if (IsTouchingGround && _rigidbody.velocity.y <= 0)
+		if (IsTouchingGround && !_isSliding && _rigidbody.velocity.y <= 0)
 		{
 			var velocity = _rigidbody.velocity;
 			velocity.y = 0;
@@ -54,6 +58,24 @@ public class Player : MonoBehaviour
 		else
 		{
 			_rigidbody.velocity += Vector3.down * _gravityForce * deltaTime;
+		}
+	}
+
+	private void Slide(float deltaTime)
+	{
+		_isSliding = false;
+		if (Physics.Raycast(transform.position, Vector3.down, out var hit, _playerHeight))
+		{
+			var angle = Vector3.Angle(hit.normal, Vector3.up);
+			if (angle > _minSlideAngle)
+			{
+				var directionParallelToGround = Vector3.Cross(hit.normal, Vector3.up);
+				var directionAlongTheSlide = Vector3.Cross(hit.normal, directionParallelToGround);
+
+				_rigidbody.velocity += directionAlongTheSlide * _slideForce * angle / 90f * deltaTime;
+
+				_isSliding = true;
+			}
 		}
 	}
 
