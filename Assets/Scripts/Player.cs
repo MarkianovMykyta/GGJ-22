@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 	[SerializeField] private float _playerHeight;
 	[SerializeField] private float _crouchingHeight;
 	[SerializeField] private float _moveSpeed;
-	[SerializeField] private float _crouchingSpeed;
+	//[SerializeField] private float _crouchingSpeed;
 	[SerializeField] private float _stopSpeed;
 	[SerializeField] private float _gravityForce;
 	[SerializeField] private float _jumpForce;
@@ -62,7 +62,7 @@ public class Player : MonoBehaviour
 		if (isCrouching)
 		{
 			_currentHeight = _crouchingHeight;
-			_currentSpeed = _crouchingSpeed;
+			//_currentSpeed = _crouchingSpeed;
 		}
 		else
 		{
@@ -148,7 +148,8 @@ public class Player : MonoBehaviour
 		}
 		else
 		{
-			var newVelocity = (characterForwardDir * moveInput.y + _head.right * moveInput.x).normalized * _currentSpeed;
+			var speed = _distanceToGround < _playerHeight ? _distanceToGround / _playerHeight * _currentSpeed : _currentSpeed;
+			var newVelocity = (characterForwardDir * moveInput.y + _head.right * moveInput.x).normalized * speed;
 
 			horizontalVelocity = Vector3.Lerp(horizontalVelocity, newVelocity, _stopSpeed);
 		}
