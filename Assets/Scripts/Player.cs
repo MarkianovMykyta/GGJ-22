@@ -1,23 +1,30 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
 	[SerializeField] private float _playerHeight;
+	[SerializeField] private float _crouchingHeight;
 	[SerializeField] private float _moveSpeed;
+	//[SerializeField] private float _crouchingSpeed;
 	[SerializeField] private float _stopSpeed;
 	[SerializeField] private float _gravityForce;
 	[SerializeField] private float _jumpForce;
 	[SerializeField] private float _minSlideAngle;
 	[SerializeField] private float _slideForce;
+	[SerializeField] private float _standForce;
+	[SerializeField] private float _gravityCompensation;
 	[SerializeField] private Transform _head;
 
 	private Rigidbody _rigidbody;
 	private PlayerInputActions _playerInputActions;
-	
+
+	private float _currentHeight;
+	private float _currentSpeed;
 	private float _distanceToGround;
 
-	private bool IsTouchingGround => _distanceToGround <= _playerHeight;
+	private bool IsTouchingGround => _distanceToGround <= _currentHeight;
 	private bool _isSliding;
 
 	private void Awake()
@@ -33,6 +40,11 @@ public class Player : MonoBehaviour
 		_playerInputActions.Player.Jump.performed += Jump;
 	}
 
+	private void Update()
+	{
+		Crouch();
+	}
+
 	private void FixedUpdate()
 	{
 		UpdateDistanceToGround();
@@ -40,31 +52,60 @@ public class Player : MonoBehaviour
 		Move(Time.fixedDeltaTime);
 		ApplyGravity(Time.fixedDeltaTime);
 		Slide(Time.fixedDeltaTime);
+
+		UpdatePlayerLayer();
+	}
+
+	private void Crouch()
+	{
+		var isCrouching = _playerInputActions.Player.Crouch.IsPressed();
+		if (isCrouching)
+		{
+			_currentHeight = _crouchingHeight;
+			//_currentSpeed = _crouchingSpeed;
+		}
+		else
+		{
+			_currentHeight = _playerHeight;
+			_currentSpeed = _moveSpeed;
+		}
+	}
+
+	private void UpdatePlayerLayer()
+	{
+		if (_distanceToGround < _crouchingHeight + 0.1f)
+		{
+			gameObject.layer = LayerMask.NameToLayer("PlayerStealth");
+		}
+		else
+		{
+			gameObject.layer = LayerMask.NameToLayer("PlayerDefault");
+		}
 	}
 
 	private void ApplyGravity(float deltaTime)
 	{
-		if (IsTouchingGround && !_isSliding && _rigidbody.velocity.y <= 0)
+		var velocity = _rigidbody.velocity;
+		
+		if (IsTouchingGround)
 		{
-			var velocity = _rigidbody.velocity;
-			velocity.y = 0;
-			_rigidbody.velocity = velocity;
-
-			var currentPosition = _rigidbody.position;
-			var targetPosition = currentPosition;
-			targetPosition.y += _playerHeight - _distanceToGround;
-			_rigidbody.position = Vector3.Lerp(currentPosition, targetPosition, 0.3f);
+			var mod = velocity.y < 0 ? -velocity.y : 0f;
+			var resultForce = mod * _gravityCompensation + _standForce * (1f - _distanceToGround / _currentHeight) * deltaTime;
+			
+			velocity.y += resultForce;
 		}
 		else
 		{
-			_rigidbody.velocity += Vector3.down * _gravityForce * deltaTime;
+			velocity += Vector3.down * _gravityForce * deltaTime;
 		}
+
+		_rigidbody.velocity = velocity;
 	}
 
 	private void Slide(float deltaTime)
 	{
 		_isSliding = false;
-		if (Physics.Raycast(transform.position, Vector3.down, out var hit, _playerHeight))
+		if (Physics.Raycast(transform.position, Vector3.down, out var hit, _currentHeight))
 		{
 			var angle = Vector3.Angle(hit.normal, Vector3.up);
 			if (angle > _minSlideAngle)
@@ -81,7 +122,7 @@ public class Player : MonoBehaviour
 
 	private void UpdateDistanceToGround()
 	{
-		if (Physics.Raycast(transform.position, Vector3.down, out var hit, _playerHeight))
+		if (Physics.Raycast(transform.position, Vector3.down, out var hit))
 		{
 			_distanceToGround = hit.distance;
 		}
@@ -107,7 +148,8 @@ public class Player : MonoBehaviour
 		}
 		else
 		{
-			var newVelocity = (characterForwardDir * moveInput.y + _head.right * moveInput.x).normalized * _moveSpeed;
+			var speed = _distanceToGround < _playerHeight ? _distanceToGround / _playerHeight * _currentSpeed : _currentSpeed;
+			var newVelocity = (characterForwardDir * moveInput.y + _head.right * moveInput.x).normalized * speed;
 
 			horizontalVelocity = Vector3.Lerp(horizontalVelocity, newVelocity, _stopSpeed);
 		}
@@ -120,7 +162,7 @@ public class Player : MonoBehaviour
 
 	private void Jump(InputAction.CallbackContext obj)
 	{
-		if (_distanceToGround <= _playerHeight + 0.1f)
+		if (_distanceToGround <= _currentHeight + 0.1f)
 		{
 			_rigidbody.velocity += (Vector3.up + _rigidbody.velocity.normalized).normalized * _jumpForce;
 		}
