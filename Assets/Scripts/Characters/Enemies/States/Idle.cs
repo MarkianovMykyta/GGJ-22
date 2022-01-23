@@ -26,6 +26,10 @@ namespace Characters.Enemies.States
             if (Keyboard.current.spaceKey.isPressed)
             {
                 stateMachine.ChangeState(new PatrolState(_enemy, stateMachine, context));
+            } 
+            else if (Keyboard.current.sKey.isPressed)
+            {
+                stateMachine.ChangeState(new DeadState(_enemy, stateMachine, context));
             }
         }
     }

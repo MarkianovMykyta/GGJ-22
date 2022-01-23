@@ -2,6 +2,7 @@
 using UnityEngine.AI;
 
 using Contexts;
+using Souls;
 
 namespace Characters
 {
