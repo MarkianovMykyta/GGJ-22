@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 2274885584709880431}
   - component: {fileID: 2274885584709880430}
   m_Layer: 0
-  m_Name: Bandito
+  m_Name: BanditoView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -97,7 +97,7 @@ Transform:
   - {fileID: 9044175842723491041}
   - {fileID: 3837680144775194394}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &2274885584709880432
 BoxCollider:
@@ -653,8 +653,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7429976558699587243}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0.0383377, y: 0.6865933, z: 0.00000009224986}
+  m_LocalRotation: {x: 0.0000000032434855, y: 0.7071068, z: 0.7071067, w: -0.000000015007345}
+  m_LocalPosition: {x: 0.038337708, y: 0.6865933, z: 0.000000012193169}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -663,7 +663,7 @@ Transform:
   - {fileID: 1994659282116767328}
   m_Father: {fileID: 86565994387487871}
   m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -89.98, y: 0, z: 180}
 --- !u!1 &8611772258601941971
 GameObject:
   m_ObjectHideFlags: 0
