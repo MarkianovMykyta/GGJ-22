@@ -12,7 +12,7 @@ namespace Enviroment
         [SerializeField] private List<Waypoint> _waypoints;
 
 #if UNITY_EDITOR
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
             for (int i = 0; i < _waypoints.Count - 1; i++)
             {
