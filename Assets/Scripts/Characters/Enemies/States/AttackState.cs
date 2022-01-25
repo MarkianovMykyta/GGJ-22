@@ -36,11 +36,11 @@ namespace Characters.Enemies.States
 				percent += Time.deltaTime * _enemy.AttackSpeed;
 				float interpolation = (-Mathf.Pow(percent, 2) + percent) * 4;
 				_enemy.View.position = Vector3.Lerp(originalPosition, attackPosition, interpolation);
-				
-				ApplyDamageToTarget();
-				
+
 				yield return null;
 			}
+			
+			ApplyDamageToTarget();
 
 			_enemy.navMeshAgent.isStopped = false;
 			_enemy.View.position = originalPosition;

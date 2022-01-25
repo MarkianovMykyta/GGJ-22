@@ -6,7 +6,7 @@ namespace Characters.Enemies.States
 {
     public class LocalInspection : PatrolState
     {
-        private int _lookBackID = Animator.StringToHash("LookBack");
+        private int _lookBackID = Animator.StringToHash("LookAround");
 
         private Coroutine _inspectationRoutine;
         private Coroutine _fov;
