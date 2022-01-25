@@ -75,6 +75,8 @@ GameObject:
   - component: {fileID: 2274885584709880432}
   - component: {fileID: 2274885584709880431}
   - component: {fileID: 2274885584709880430}
+  - component: {fileID: 4912730716632267345}
+  - component: {fileID: 3581572715865897342}
   m_Layer: 0
   m_Name: BanditoView
   m_TagString: Untagged
@@ -97,7 +99,7 @@ Transform:
   - {fileID: 9044175842723491041}
   - {fileID: 3837680144775194394}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &2274885584709880432
 BoxCollider:
@@ -148,6 +150,56 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!195 &4912730716632267345
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754454078354384581}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &3581572715865897342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754454078354384581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 923f6a2e06946b44bb67b1a2de9aaa79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _health: 100
+  context: {fileID: 0}
+  navMeshAgent: {fileID: 4912730716632267345}
+  _animator: {fileID: 2274885584709880430}
+  CurrentState: 0
+  DetectionRadius: 5
+  Angle: 90
+  TargetMask:
+    serializedVersion: 2
+    m_Bits: 64
+  ObstructionMask:
+    serializedVersion: 2
+    m_Bits: 1
+  AttackDamage: 10
+  AttackRange: 2
+  AttackSpeed: 2
 --- !u!1 &797655160409313624
 GameObject:
   m_ObjectHideFlags: 0
