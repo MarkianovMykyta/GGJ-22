@@ -8697,7 +8697,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &186382926
 Mesh:
@@ -93633,7 +93633,7 @@ PrefabInstance:
     - target: {fileID: 2019733805457815908, guid: 4f66140cba6baff41b2b26116549379d,
         type: 3}
       propertyPath: m_Lens.m_SensorSize.x
-      value: 1.948323
+      value: 1.7629399
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
