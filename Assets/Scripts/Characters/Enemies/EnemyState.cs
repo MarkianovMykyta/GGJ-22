@@ -1,1 +1,1 @@
-﻿public enum EnemyState { None, Idle, Patrol, Chase, Die }
+﻿public enum EnemyState { None, Idle, Patrol, Chase, Attack, Die }

@@ -20,6 +20,9 @@ namespace Characters.Enemies
         public float Angle;
         public LayerMask TargetMask;
         public LayerMask ObstructionMask;
+        [Space]
+        public float AttackRange;
+        public float AttackSpeed;
 
         public Animator Animator => _animator;
 
