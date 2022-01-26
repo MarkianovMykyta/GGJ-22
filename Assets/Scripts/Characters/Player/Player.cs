@@ -34,7 +34,7 @@ namespace Characters.Player
 			if(IsDestroyed) return;
 
 			IsDestroyed = true;
-			Destroy(gameObject, 1f);
+			gameObject.SetActive(false);
 		}
 	}
 }
