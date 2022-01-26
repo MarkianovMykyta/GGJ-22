@@ -8,7 +8,7 @@ namespace UI
 {
     public class MainMenu : MonoBehaviour
     {
-        [SerializeField] private GameMaster _gameMaster;
+        private GameMaster _gameMaster;
         [Space]
         [Header("Main buttons")]
         [SerializeField] private Button _continue;
@@ -23,14 +23,46 @@ namespace UI
         [SerializeField] private TMP_Dropdown _quality;
         [SerializeField] private Button _apply;
 
-        public void Initialize(Settings settings)
-        {
-            //...
-        }
+        [Header("Popups")]
+        [SerializeField] private GameObject _notFoundSavePopup;
+        [SerializeField] private Button _newGameFromNotFoundPopup;
 
         private void Awake()
         {
+            _gameMaster = GameMaster.Instance;
+            if (_gameMaster == null)
+            {
+                _gameMaster = Instantiate(Resources.Load<GameMaster>("GameMaster"));
+            }
+
+            Initialize(_gameMaster.Settings);
+        }
+
+        public void Initialize(Settings settings)
+        {
+            _continue.onClick.AddListener(Continue);
+            _applyNewGame.onClick.AddListener(_gameMaster.LoadStartLocation);
+            _newGameFromNotFoundPopup.onClick.AddListener(_gameMaster.LoadStartLocation);
             _exit.onClick.AddListener(Application.Quit);
+
+            _gameMaster.LevelStarted += Close;
+        }
+
+        private void Continue()
+        {
+            if(_gameMaster.IsHaveSave)
+            {
+                _gameMaster.LoadLastLocation();
+            }
+            else
+            {
+                _notFoundSavePopup.SetActive(true);
+            }
+        }
+
+        public void Close()
+        {
+            gameObject.SetActive(false);
         }
     }
 }
