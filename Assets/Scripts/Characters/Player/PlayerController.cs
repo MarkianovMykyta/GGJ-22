@@ -27,8 +27,25 @@ namespace Characters.Player
 		private bool IsTouchingGround => _distanceToGround <= _currentHeight;
 		private bool _isSliding;
 
+		public PlayerInputActions PlayerInput => _playerInputActions;
+
+		public void Initialize()
+		{
+			Cursor.visible = false;
+			Cursor.lockState = CursorLockMode.Locked;
+
+			_rigidbody = GetComponent<Rigidbody>();
+
+			_playerInputActions = new PlayerInputActions();
+			//_playerInputActions.Enable();
+
+			_playerInputActions.Player.Jump.performed += Jump;
+		}
+
 		private void Awake()
 		{
+			if (GameMaster.Instance != null) return;
+
 			Cursor.visible = false;
 			Cursor.lockState = CursorLockMode.Locked;
 

@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections;
 using UI;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public enum LocationType
 {
     None,
     Town,
-    Canlization,
+    Canalization,
     Forest,
     BanditHome,
     Mountain,
@@ -21,25 +23,105 @@ public enum ItemType
     Dagger,
 };
 
-
 public class GameMaster : MonoBehaviour
 {
     public static GameMaster Instance;
-    
-    [SerializeField] private MainMenu _mainMenu;
+
+    public Action LevelStarted;
+
+    [Header("Global")]
+    [SerializeField] private GlobalUI _globalUI;
+    [Space]
+    [SerializeField] private float _artificialFirstLoadingTime = 0f;
+    [SerializeField] private bool _cleanStart;
+    //[Space]
+    //[Header("Menu")]
+    //[SerializeField] private MainMenu _mainMenu;
 
     private PlayerWrapper _playerWrapper;
     private LevelManager _levelManager;
+    private LocationMaster _locationMaster;
+
+    public bool IsHaveSave => _playerWrapper.LastCheckpoint.LocationType != LocationType.None;
+    public Checkpoint LastCheckpoint => _playerWrapper.LastCheckpoint;
+    public Settings Settings => _playerWrapper.Settings;
+
+    public LocationMaster LocationMaster
+    {
+        set
+        {
+            _locationMaster = value;
+        }
+    }
+
+    #region Monobehaviour Methods
 
     private void Awake()
     {
         CheckInstance();
 
+        _levelManager = new LevelManager();
         _playerWrapper = new PlayerWrapper();
-        _playerWrapper.Load();
 
-        _mainMenu.Initialize(_playerWrapper.Settings);
-        _levelManager.LoadScene(_playerWrapper.LastCheckpoint.LocationType);
+        _playerWrapper.Load();
+        if (_cleanStart)
+        {
+            _playerWrapper.Initialize();
+        }
+
+        _globalUI.Initialize();
+    }
+
+    #endregion Monobehaviour Methods
+
+    public void LoadStartLocation()
+    {
+        _playerWrapper.Initialize();
+        LoadLastLocation();
+    }
+
+    public void LoadLastLocation()
+    {
+        StartCoroutine(_levelManager.LoadLevelAsync(_playerWrapper.LastCheckpoint.LocationType));
+        StartCoroutine(ArtificialLoadIncrease(AwaitAnyPressKey));
+
+        _globalUI.ShowLoadingScreen(true);
+    }
+
+    public void RegisterCheckpoint(Checkpoint checkpoint)
+    {
+        Debug.Log($"Register new checpoint {checkpoint}");
+        _playerWrapper.RegisterCheckpoint(checkpoint);
+    }
+
+    private void AwaitAnyPressKey()
+    {
+        _globalUI.ShowPressAnyKey(true);
+        StartCoroutine(WaitPressKey(StartGame));
+    }
+
+    private void StartGame()
+    {
+        LevelStarted?.Invoke();
+        _levelManager.UnloadPreviousScene();
+
+        _globalUI.ShowLoadingScreen(false);
+        _globalUI.ShowPressAnyKey(false);
+
+        _locationMaster.Activate();
+    }
+
+    private IEnumerator WaitPressKey(Action callback)
+    {
+        while (true)
+        {
+            if (Keyboard.current.anyKey.wasReleasedThisFrame)
+            {
+                callback();
+                break;
+            }
+            yield return null;
+        }
     }
 
     private void CheckInstance()
@@ -56,17 +138,47 @@ public class GameMaster : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void RegisterCheckpoint(Checkpoint checkpoint)
+    private IEnumerator ArtificialLoadIncrease(Action callback)
     {
-        _playerWrapper.RegisterCheckpoint(checkpoint);
+        yield return new WaitForSeconds(_artificialFirstLoadingTime);
+
+        while (true)
+        {
+            if (_levelManager.LoadingOperation.isDone && _locationMaster != null)
+            {
+                callback();
+                break;
+            }
+            yield return null;
+        }
     }
 }
 
 public class LevelManager
 {
-    public void LoadScene(LocationType locationType)
+    public AsyncOperation LoadingOperation;
+
+    private Scene CurrenScene;
+
+    public LevelManager()
     {
-        SceneManager.LoadScene(locationType.ToString(), LoadSceneMode.Additive); //...
+        CurrenScene = SceneManager.GetActiveScene();
+    }
+
+    public IEnumerator LoadLevelAsync(LocationType locationType)
+    {
+        LoadingOperation = SceneManager.LoadSceneAsync(locationType.ToString(), LoadSceneMode.Additive);
+
+        while (!LoadingOperation.isDone)
+        {
+            yield return null;
+        }
+    }
+
+    public void UnloadPreviousScene()
+    {
+        SceneManager.UnloadSceneAsync(CurrenScene, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
+        SceneManager.sceneUnloaded += (val) => CurrenScene = SceneManager.GetActiveScene();
     }
 }
 
@@ -80,12 +192,19 @@ public class PlayerWrapper
 
     private PlayerModel _playerModel;
 
+    public void Initialize()
+    {
+        _playerModel.LastCheckPoint = new Checkpoint(0, LocationType.Town);
+        _playerModel.Items = ItemType.None;
+        Save();
+    }
+
     public void Load()
     {
         if (PlayerPrefs.HasKey(key))
         {
             string model = PlayerPrefs.GetString(key);
-            if (string.IsNullOrEmpty(model))
+            if (!string.IsNullOrEmpty(model))
             {
                 _playerModel = JsonUtility.FromJson<PlayerModel>(model);
             }
@@ -103,7 +222,7 @@ public class PlayerWrapper
     public void Save()
     {
         string model = JsonUtility.ToJson(_playerModel);
-        if (string.IsNullOrEmpty(model))
+        if (!string.IsNullOrEmpty(model))
         {
             PlayerPrefs.SetString(key, model);
         }
@@ -141,6 +260,23 @@ public class Checkpoint
 {
     public int CheckPointIndex;
     public LocationType LocationType;
+
+    public Checkpoint()
+    {
+        CheckPointIndex = 0;
+        LocationType = LocationType.None;
+    }
+
+    public Checkpoint(int checkPointIndex, LocationType locationType)
+    {
+        CheckPointIndex = checkPointIndex;
+        LocationType = locationType;
+    }
+
+    public override string ToString()
+    {
+        return $"Index: {CheckPointIndex}, Location {LocationType}";
+    }
 }
 
 [System.Serializable]
