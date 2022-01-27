@@ -32,14 +32,14 @@ namespace Characters.Enemies.States
         public override void Update()
         {
 
-            if (Keyboard.current.spaceKey.isPressed)
-            {
-                stateMachine.ChangeState(new PatrolState(_enemy, stateMachine, context));
-            } 
-            else if (Keyboard.current.sKey.isPressed)
-            {
-                stateMachine.ChangeState(new DeadState(_enemy, stateMachine, context));
-            }
+            // if (Keyboard.current.spaceKey.isPressed)
+            // {
+            //     stateMachine.ChangeState(new PatrolState(_enemy, stateMachine, context));
+            // } 
+            // else if (Keyboard.current.sKey.isPressed)
+            // {
+            //     stateMachine.ChangeState(new DeadState(_enemy, stateMachine, context));
+            // }
         }
     }
 }

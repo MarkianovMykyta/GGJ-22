@@ -1,4 +1,5 @@
 ﻿using System;
+using Contexts;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,11 +18,14 @@ namespace Characters.Player
 
 
 		private PlayerInputActions _playerInputActions;
+		private Context _context;
 
 		private void Awake()
 		{
 			_playerInputActions = new PlayerInputActions();
 			_playerInputActions.Player.Attack.performed += Attack;
+			
+			_context = FindObjectOfType<Context>();
 		}
 
 		private void OnEnable()
@@ -47,13 +51,28 @@ namespace Characters.Player
 				if (damageable != null)
 				{
 					damageable.ApplyDamage(_damage);
-					Debug.LogError("Attacked!");
 				}
+				
+				PlayHitEffect(hit);
 			}
 
 			if (_animator != null)
 			{
 				_animator.SetTrigger(Attack1);
+			}
+		}
+
+		private void PlayHitEffect(RaycastHit hit)
+		{
+			var hitEffect = _context.EffectsManager.GetHitEffect();
+			hitEffect.transform.position = hit.point;
+			hitEffect.transform.forward = hit.normal;
+			var tex = (Texture2D)hit.collider.GetComponentInChildren<Renderer>()?.material.mainTexture;
+			var color = tex?.GetPixelBilinear(hit.textureCoord2.x, hit.textureCoord2.y);
+
+			if (color.HasValue)
+			{
+				hitEffect.PlayEffect(color.Value);
 			}
 		}
 	}

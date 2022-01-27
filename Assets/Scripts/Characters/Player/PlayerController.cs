@@ -15,6 +15,7 @@ namespace Characters.Player
 		[SerializeField] private float _slideForce;
 		[SerializeField] private float _standForce;
 		[SerializeField] private float _gravityCompensation;
+		[SerializeField] private float _interactDistance;
 		[SerializeField] private Transform _head;
 
 		private Rigidbody _rigidbody;
@@ -37,24 +38,27 @@ namespace Characters.Player
 			_rigidbody = GetComponent<Rigidbody>();
 
 			_playerInputActions = new PlayerInputActions();
-			//_playerInputActions.Enable();
+			_playerInputActions.Enable();
 
 			_playerInputActions.Player.Jump.performed += Jump;
+			_playerInputActions.Player.Interact.performed += Interact;
 		}
 
+		public void Freeze()
+		{
+			_playerInputActions.Disable();
+		}
+
+		public void UnFreeze()
+		{
+			_playerInputActions.Enable();
+		}
+		
 		private void Awake()
 		{
 			if (GameMaster.Instance != null) return;
 
-			Cursor.visible = false;
-			Cursor.lockState = CursorLockMode.Locked;
-
-			_rigidbody = GetComponent<Rigidbody>();
-
-			_playerInputActions = new PlayerInputActions();
-			_playerInputActions.Enable();
-
-			_playerInputActions.Player.Jump.performed += Jump;
+			Initialize();
 		}
 
 		private void Update()
@@ -79,7 +83,6 @@ namespace Characters.Player
 			if (isCrouching)
 			{
 				_currentHeight = _crouchingHeight;
-				//_currentSpeed = _crouchingSpeed;
 			}
 			else
 			{
@@ -182,6 +185,19 @@ namespace Characters.Player
 			if (_distanceToGround <= _currentHeight + 0.1f)
 			{
 				_rigidbody.velocity += (Vector3.up + _rigidbody.velocity.normalized).normalized * _jumpForce;
+			}
+		}
+
+		private void Interact(InputAction.CallbackContext obj)
+		{
+			if (Physics.Raycast(_head.position, _head.forward, out var hit, _interactDistance))
+			{
+				var interactable = hit.collider.GetComponent<IInteractable>();
+
+				if (interactable != null)
+				{
+					interactable.Interact(this);
+				}
 			}
 		}
 	}
