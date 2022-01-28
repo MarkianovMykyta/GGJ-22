@@ -9,9 +9,12 @@ EditorBuildSettings:
     path: Assets/Content/Scenes/GameStructure/MainMenu.unity
     guid: 6b5a964937f804d4b95dbb1156dfd359
   - enabled: 1
-    path: Assets/Content/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
     path: Assets/Content/Scenes/GameStructure/Town.unity
     guid: 3355ebe58ec85c1438fb40769f9f3836
+  - enabled: 1
+    path: Assets/Content/Scenes/GameStructure/Canalization.unity
+    guid: 3121ad35b4ea98d45a0913d8fcea8a2d
+  - enabled: 1
+    path: Assets/Content/Scenes/SampleScene.unity
+    guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects: {}

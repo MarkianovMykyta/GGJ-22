@@ -14,8 +14,9 @@ namespace Contexts
         public GameObject Target;
         public SoulManager SoulManager;
 
-        public GameObject PlayerGO;
-        public PlayerController PlayerController;
-        public CinemachineVirtualCamera PlayerVCamera;
+        public PlayerRoot PlayerRoot;
+        //public GameObject PlayerGO;
+        //public PlayerController PlayerController;
+        //public CinemachineVirtualCamera PlayerVCamera;
     }
 }
