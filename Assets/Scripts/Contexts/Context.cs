@@ -18,8 +18,9 @@ namespace Contexts
         public EffectsManager EffectsManager;
         public DialogManager DialogManager;
 
-        public GameObject PlayerGO;
-        public PlayerController PlayerController;
-        public CinemachineVirtualCamera PlayerVCamera;
+        public PlayerRoot PlayerRoot;
+        //public GameObject PlayerGO;
+        //public PlayerController PlayerController;
+        //public CinemachineVirtualCamera PlayerVCamera;
     }
 }

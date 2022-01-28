@@ -227,8 +227,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _globalUI: {fileID: 6717108875808326835}
+  _gameLocationSequence: {fileID: 11400000, guid: 2528dd6453d6d654e8f332390dca29c6,
+    type: 2}
   _artificialFirstLoadingTime: 10
   _cleanStart: 0
+  _playerRootPrefab: {fileID: 3350208350620225278, guid: 4f66140cba6baff41b2b26116549379d,
+    type: 3}
 --- !u!1 &6717108876089045432
 GameObject:
   m_ObjectHideFlags: 0

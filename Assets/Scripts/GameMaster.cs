@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Characters.Player;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -32,25 +34,54 @@ public class GameMaster : MonoBehaviour
     [Header("Global")]
     [SerializeField] private GlobalUI _globalUI;
     [Space]
+    [SerializeField] private GameLocationSequence _gameLocationSequence;
+    [Space]
     [SerializeField] private float _artificialFirstLoadingTime = 0f;
     [SerializeField] private bool _cleanStart;
-    //[Space]
-    //[Header("Menu")]
-    //[SerializeField] private MainMenu _mainMenu;
+
+    [Header("Player")]
+    [SerializeField] private PlayerRoot _playerRootPrefab;
 
     private PlayerWrapper _playerWrapper;
     private LevelManager _levelManager;
-    private LocationMaster _locationMaster;
+    private List<LocationMaster> _locationMasters;
+    private PlayerRoot _playerRoot;
 
     public bool IsHaveSave => _playerWrapper.LastCheckpoint.LocationType != LocationType.None;
     public Checkpoint LastCheckpoint => _playerWrapper.LastCheckpoint;
     public Settings Settings => _playerWrapper.Settings;
-
-    public LocationMaster LocationMaster
+    public LocationMaster CurrentLocationMaster
     {
-        set
+        get
         {
-            _locationMaster = value;
+           if(_locationMasters.Count > 0)
+           {
+                return _locationMasters[0];
+           }
+
+            return null;//very bad.
+        }
+    }
+    public PlayerRoot PlayerRoot
+    {
+        get
+        {
+            //check on level
+            if(_playerRoot == null && CurrentLocationMaster != null)
+            {
+                _playerRoot = CurrentLocationMaster.Context.PlayerRoot;
+
+                if(_playerRoot != null)
+                    DontDestroyOnLoad(_playerRoot);
+            }
+
+            if (_playerRoot == null)
+            {
+                _playerRoot = Instantiate(_playerRootPrefab);
+                DontDestroyOnLoad(_playerRoot);
+            }
+
+            return _playerRoot;
         }
     }
 
@@ -62,6 +93,7 @@ public class GameMaster : MonoBehaviour
 
         _levelManager = new LevelManager();
         _playerWrapper = new PlayerWrapper();
+        _locationMasters = new List<LocationMaster>();
 
         _playerWrapper.Load();
         if (_cleanStart)
@@ -70,6 +102,15 @@ public class GameMaster : MonoBehaviour
         }
 
         _globalUI.Initialize();
+    }
+
+    private void Start()
+    {
+        if (!_levelManager.IsMenu)
+        {
+            StartGame();
+            LoadNextLocation();
+        }
     }
 
     #endregion Monobehaviour Methods
@@ -84,9 +125,48 @@ public class GameMaster : MonoBehaviour
     {
         StartCoroutine(_levelManager.LoadLevelAsync(_playerWrapper.LastCheckpoint.LocationType));
         StartCoroutine(ArtificialLoadIncrease(AwaitAnyPressKey));
+        LoadNextLocation();
 
         _globalUI.ShowLoadingScreen(true);
     }
+
+    private void LoadNextLocation()
+    {
+        LocationType nextLocation = _gameLocationSequence.GetNextLocation(_playerWrapper.LastCheckpoint);
+        if (nextLocation != LocationType.None)
+        {
+            if(_levelManager.LoadingOperation != null && !_levelManager.LoadingOperation.isDone)
+                _levelManager.LoadingOperation.completed += (val) => StartCoroutine(_levelManager.LoadLevelAsync(nextLocation));
+            else
+                StartCoroutine(_levelManager.LoadLevelAsync(nextLocation));
+        }
+    }
+
+    public void LocationStateDone()
+    {
+        var removeLocation = _locationMasters[0];
+        _locationMasters.RemoveAt(0);
+
+        LocationType nextLocation = _gameLocationSequence.GetNextLocation(_playerWrapper.LastCheckpoint);
+
+        CurrentLocationMaster.Initialize();
+
+        if(nextLocation == removeLocation.LocationType)
+        {
+            _locationMasters.Add(removeLocation);
+            return;
+        }
+
+        if (nextLocation == CurrentLocationMaster.LocationType)
+        {
+            return;
+        }
+
+        LoadNextLocation();
+        _levelManager.LoadingOperation.completed += (val) => CurrentLocationMaster.Activate();
+    }
+
+    public void RegisterLocationMaster(LocationMaster locationMaster) => _locationMasters.Add(locationMaster);
 
     public void RegisterCheckpoint(Checkpoint checkpoint)
     {
@@ -97,18 +177,24 @@ public class GameMaster : MonoBehaviour
     private void AwaitAnyPressKey()
     {
         _globalUI.ShowPressAnyKey(true);
-        StartCoroutine(WaitPressKey(StartGame));
+        StartCoroutine(WaitPressKey(UnloadMenuAndStart));
+    }
+
+    private void UnloadMenuAndStart()
+    {
+        LevelStarted?.Invoke();
+        _levelManager.UnloadPreviousScene();
+        _globalUI.ShowLoadingScreen(false);
+        _globalUI.ShowPressAnyKey(false);
+
+        StartGame();
     }
 
     private void StartGame()
     {
-        LevelStarted?.Invoke();
-        _levelManager.UnloadPreviousScene();
-
-        _globalUI.ShowLoadingScreen(false);
-        _globalUI.ShowPressAnyKey(false);
-
-        _locationMaster.Activate();
+        ///
+        _playerRoot.Activate();
+        CurrentLocationMaster.Activate();
     }
 
     private IEnumerator WaitPressKey(Action callback)
@@ -144,7 +230,7 @@ public class GameMaster : MonoBehaviour
 
         while (true)
         {
-            if (_levelManager.LoadingOperation.isDone && _locationMaster != null)
+            if (_levelManager.LoadingOperation.isDone && CurrentLocationMaster != null)
             {
                 callback();
                 break;
@@ -158,12 +244,14 @@ public class LevelManager
 {
     public AsyncOperation LoadingOperation;
 
-    private Scene CurrenScene;
+    private Scene CurrentScene;
 
     public LevelManager()
     {
-        CurrenScene = SceneManager.GetActiveScene();
+        CurrentScene = SceneManager.GetActiveScene();
     }
+
+    public bool IsMenu => SceneManager.GetActiveScene().buildIndex == 0;
 
     public IEnumerator LoadLevelAsync(LocationType locationType)
     {
@@ -177,8 +265,8 @@ public class LevelManager
 
     public void UnloadPreviousScene()
     {
-        SceneManager.UnloadSceneAsync(CurrenScene, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
-        SceneManager.sceneUnloaded += (val) => CurrenScene = SceneManager.GetActiveScene();
+        SceneManager.UnloadSceneAsync(CurrentScene, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
+        SceneManager.sceneUnloaded += (val) => CurrentScene = SceneManager.GetActiveScene();
     }
 }
 
@@ -260,17 +348,20 @@ public class Checkpoint
 {
     public int CheckPointIndex;
     public LocationType LocationType;
+    public LocationState LocationState;
 
     public Checkpoint()
     {
         CheckPointIndex = 0;
         LocationType = LocationType.None;
+        LocationState = LocationState.Stage_1;
     }
 
-    public Checkpoint(int checkPointIndex, LocationType locationType)
+    public Checkpoint(int checkPointIndex, LocationType locationType, LocationState stage = LocationState.Stage_1)
     {
         CheckPointIndex = checkPointIndex;
         LocationType = locationType;
+        LocationState = stage;
     }
 
     public override string ToString()

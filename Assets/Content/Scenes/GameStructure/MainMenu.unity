@@ -5521,7 +5521,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ' \n Nikita Markianov \nValery Kuts \nYehvenii Hladkykh'
+  m_text: ' \n Nikita Markianov \nValery Kuts \n Nikita Antonov \nYehvenii Hladkykh'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e3053184c2e8c5f42a2f5f84baac5896, type: 2}
   m_sharedMaterial: {fileID: 8546645524115971813, guid: e3053184c2e8c5f42a2f5f84baac5896,
