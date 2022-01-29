@@ -15,6 +15,7 @@ namespace Characters
         public NavMeshAgent navMeshAgent;
         protected StateMachine stateMachine;
         protected Soul soul;
+
         public Soul Soul
         {
             get
@@ -26,9 +27,7 @@ namespace Characters
                 soul = value;
             }
         }
-
         public bool HasSoul => soul != null;
-
         public Transform View { get; protected set; }
         public int Health => _health;
         public bool IsDestroyed { get; private set; }

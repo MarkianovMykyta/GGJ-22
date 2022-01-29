@@ -1,14 +1,15 @@
 ﻿using Contexts;
+using Enviroment.Intractable;
 using System;
 using UnityEngine;
 
-[Serializable]
-public class LevelStateObjectsPair
-{
-    public LocationState LocationState;
-    public GameObject[] ObjectsToActivate;
-    public GameObject[] ObjectsToDeactivate;
-}
+//[Serializable]
+//public class LevelStateObjectsPair
+//{
+//    public LocationState LocationState;
+//    public GameObject[] ObjectsToActivate;
+//    public GameObject[] ObjectsToDeactivate;
+//}
 
 public class LocationMaster : MonoBehaviour
 {
@@ -18,7 +19,8 @@ public class LocationMaster : MonoBehaviour
     private GameMaster _gameMaster;
 
     public CheckpointObject[] _checkpoints;
-    public LevelStateObjectsPair[] _levelStateObjectsPairs;
+    public Door[] _doors;
+    //public LevelStateObjectsPair[] _levelStateObjectsPairs;
 
     public Context Context => _context;
     public LocationType LocationType => _locationType;
@@ -39,14 +41,14 @@ public class LocationMaster : MonoBehaviour
             {
                 _context.PlayerRoot = _gameMaster.PlayerRoot;
             }
-            else
-            {
-                _context.PlayerRoot.Initialize();
-                return;
-            }
+            //else
+            //{
+            //    _context.PlayerRoot.Initialize();
+            //    return;
+            //}
 
-            if(_gameMaster.CurrentLocationMaster == this)
-                Initialize();
+            //if(_gameMaster.CurrentLocationMaster == this)
+            Initialize();
         }
     }
 
@@ -61,45 +63,23 @@ public class LocationMaster : MonoBehaviour
 
             Checkpoint checkpointModel = new Checkpoint(i, _locationType);
             _checkpoints[i].Activate += () => _gameMaster.RegisterCheckpoint(checkpointModel);
-
-            if(i == _checkpoints.Length - 1)
-            {
-                _checkpoints[i].Activate += _gameMaster.LocationStateDone;
-            }
         }
 
+        //CheckpointObject lastCheckpointObject = _checkpoints[_gameMaster.LastCheckpoint.CheckPointIndex];
+        //_context.PlayerRoot.SetPlayerToLastCheckPoint(lastCheckpointObject);
 
-        CheckpointObject lastCheckpointObject = _checkpoints[_gameMaster.LastCheckpoint.CheckPointIndex];
-        _context.PlayerRoot.SetPlayerToLastCheckPoint(lastCheckpointObject);
+        CheckpointObject firstCheckPoint = _checkpoints[0];
+        _context.PlayerRoot.SetPlayerToLastCheckPoint(firstCheckPoint);
 
-        LevelStateObjectsPair currentlocationState = GetLocationStateObject(_gameMaster.LastCheckpoint.LocationState);
-        SetupEnviromentByState(currentlocationState);
-    }
-
-    private void SetupEnviromentByState(LevelStateObjectsPair locationState)
-    {
-        for (int i = 0; i < locationState.ObjectsToActivate.Length; i++)
+        for (int i = 0; i < _doors.Length; i++)
         {
-            locationState.ObjectsToActivate[i].SetActive(true);
+            var door = _doors[i];
+            door.Opened += _gameMaster.LoadLocation;
         }
-    }
-
-    private LevelStateObjectsPair GetLocationStateObject(LocationState locationState)
-    {
-        for (int i = 0; i < _levelStateObjectsPairs.Length; i++)
-        {
-            LevelStateObjectsPair current = _levelStateObjectsPairs[i];
-            if (current.LocationState == locationState)
-            {
-                return current;
-            }
-        }
-
-        Debug.LogWarning($"Not found {locationState}");
-        return new LevelStateObjectsPair(); //null object
     }
 
     public void Activate()
     {
+
     }
 }

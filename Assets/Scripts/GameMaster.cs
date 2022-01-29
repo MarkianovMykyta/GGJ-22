@@ -12,6 +12,7 @@ public enum LocationType
     None,
     Town,
     Canalization,
+    Town2,
     Forest,
     BanditHome,
     Mountain,
@@ -44,7 +45,7 @@ public class GameMaster : MonoBehaviour
 
     private PlayerWrapper _playerWrapper;
     private LevelManager _levelManager;
-    private List<LocationMaster> _locationMasters;
+    private LocationMaster _locationMaster;
     private PlayerRoot _playerRoot;
 
     public bool IsHaveSave => _playerWrapper.LastCheckpoint.LocationType != LocationType.None;
@@ -54,12 +55,7 @@ public class GameMaster : MonoBehaviour
     {
         get
         {
-           if(_locationMasters.Count > 0)
-           {
-                return _locationMasters[0];
-           }
-
-            return null;//very bad.
+            return _locationMaster;
         }
     }
     public PlayerRoot PlayerRoot
@@ -71,8 +67,9 @@ public class GameMaster : MonoBehaviour
             {
                 _playerRoot = CurrentLocationMaster.Context.PlayerRoot;
 
-                if(_playerRoot != null)
-                    DontDestroyOnLoad(_playerRoot);
+                return _playerRoot;
+                //if(_playerRoot != null)
+                //    DontDestroyOnLoad(_playerRoot);
             }
 
             if (_playerRoot == null)
@@ -93,7 +90,6 @@ public class GameMaster : MonoBehaviour
 
         _levelManager = new LevelManager();
         _playerWrapper = new PlayerWrapper();
-        _locationMasters = new List<LocationMaster>();
 
         _playerWrapper.Load();
         if (_cleanStart)
@@ -109,7 +105,6 @@ public class GameMaster : MonoBehaviour
         if (!_levelManager.IsMenu)
         {
             StartGame();
-            LoadNextLocation();
         }
     }
 
@@ -123,50 +118,51 @@ public class GameMaster : MonoBehaviour
 
     public void LoadLastLocation()
     {
-        StartCoroutine(_levelManager.LoadLevelAsync(_playerWrapper.LastCheckpoint.LocationType));
-        StartCoroutine(ArtificialLoadIncrease(AwaitAnyPressKey));
-        LoadNextLocation();
+        var lastLocation = _playerWrapper.LastCheckpoint.LocationType;
+        LoadLocation(lastLocation, true);
+    }
+
+    public void LoadLocation(LocationType locationType)
+    {
+        LoadLocation(locationType, false);
+    }
+
+    public void LoadLocation(LocationType locationType, bool wait)
+    {
+        StartCoroutine(_levelManager.LoadLevelAsync(locationType));
+
+        Action waitCallback = wait ? AwaitAnyPressKey : CloseLoadingAndStart;
+        StartCoroutine(ArtificialLoadIncrease(waitCallback));
 
         _globalUI.ShowLoadingScreen(true);
     }
 
-    private void LoadNextLocation()
-    {
-        LocationType nextLocation = _gameLocationSequence.GetNextLocation(_playerWrapper.LastCheckpoint);
-        if (nextLocation != LocationType.None)
-        {
-            if(_levelManager.LoadingOperation != null && !_levelManager.LoadingOperation.isDone)
-                _levelManager.LoadingOperation.completed += (val) => StartCoroutine(_levelManager.LoadLevelAsync(nextLocation));
-            else
-                StartCoroutine(_levelManager.LoadLevelAsync(nextLocation));
-        }
-    }
+    //private void LoadNextLocation()
+    //{
+    //    LocationType nextLocation = _gameLocationSequence.GetNextLocation(_playerWrapper.LastCheckpoint);
+    //    if (nextLocation != LocationType.None)
+    //    {
+    //        if(_levelManager.LoadingOperation != null && !_levelManager.LoadingOperation.isDone)
+    //            _levelManager.LoadingOperation.completed += (val) => StartCoroutine(_levelManager.LoadLevelAsync(nextLocation));
+    //        else
+    //            StartCoroutine(_levelManager.LoadLevelAsync(nextLocation));
+    //    }
+    //}
 
-    public void LocationStateDone()
-    {
-        var removeLocation = _locationMasters[0];
-        _locationMasters.RemoveAt(0);
+    //public void LocationStateDone()
+    //{
+    //    var removeLocation = _locationMasters[0];
+    //    _locationMasters.RemoveAt(0);
 
-        LocationType nextLocation = _gameLocationSequence.GetNextLocation(_playerWrapper.LastCheckpoint);
+    //    LocationType nextLocation = _gameLocationSequence.GetNextLocation(_playerWrapper.LastCheckpoint);
 
-        CurrentLocationMaster.Initialize();
+    //    CurrentLocationMaster.Initialize();
 
-        if(nextLocation == removeLocation.LocationType)
-        {
-            _locationMasters.Add(removeLocation);
-            return;
-        }
+    //    //LoadNextLocation();
+    //    _levelManager.LoadingOperation.completed += (val) => CurrentLocationMaster.Activate();
+    //}
 
-        if (nextLocation == CurrentLocationMaster.LocationType)
-        {
-            return;
-        }
-
-        LoadNextLocation();
-        _levelManager.LoadingOperation.completed += (val) => CurrentLocationMaster.Activate();
-    }
-
-    public void RegisterLocationMaster(LocationMaster locationMaster) => _locationMasters.Add(locationMaster);
+    public void RegisterLocationMaster(LocationMaster locationMaster) =>  _locationMaster = locationMaster;
 
     public void RegisterCheckpoint(Checkpoint checkpoint)
     {
@@ -177,13 +173,13 @@ public class GameMaster : MonoBehaviour
     private void AwaitAnyPressKey()
     {
         _globalUI.ShowPressAnyKey(true);
-        StartCoroutine(WaitPressKey(UnloadMenuAndStart));
+        StartCoroutine(WaitPressKey(CloseLoadingAndStart));
     }
 
-    private void UnloadMenuAndStart()
+    private void CloseLoadingAndStart()
     {
         LevelStarted?.Invoke();
-        _levelManager.UnloadPreviousScene();
+        //_levelManager.UnloadPreviousScene();
         _globalUI.ShowLoadingScreen(false);
         _globalUI.ShowPressAnyKey(false);
 
@@ -192,8 +188,7 @@ public class GameMaster : MonoBehaviour
 
     private void StartGame()
     {
-        ///
-        _playerRoot.Activate();
+        PlayerRoot.Activate();
         CurrentLocationMaster.Activate();
     }
 
@@ -261,12 +256,14 @@ public class LevelManager
         {
             yield return null;
         }
-    }
 
-    public void UnloadPreviousScene()
-    {
-        SceneManager.UnloadSceneAsync(CurrentScene, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
-        SceneManager.sceneUnloaded += (val) => CurrentScene = SceneManager.GetActiveScene();
+        LoadingOperation = SceneManager.UnloadSceneAsync(CurrentScene, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
+
+        while (!LoadingOperation.isDone)
+        {
+            CurrentScene = SceneManager.GetActiveScene();
+            yield return null;
+        }
     }
 }
 
