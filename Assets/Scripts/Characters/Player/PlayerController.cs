@@ -51,7 +51,7 @@ namespace Characters.Player
 		{
 			_playerInputActions.Enable();
 		}
-		
+
 		private void Awake()
 		{
 			if (GameMaster.Instance != null) return;
@@ -188,6 +188,7 @@ namespace Characters.Player
 
 		private void Interact(InputAction.CallbackContext obj)
 		{
+			Debug.DrawRay(_head.position, (_head.forward * _interactDistance), Color.red);
 			if (Physics.Raycast(_head.position, _head.forward, out var hit, _interactDistance))
 			{
 				var interactable = hit.collider.GetComponent<IInteractable>();

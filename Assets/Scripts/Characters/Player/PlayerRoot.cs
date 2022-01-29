@@ -11,9 +11,20 @@ namespace Characters.Player
         [SerializeField] private PlayerController _playerController;
         [SerializeField] private CinemachineVirtualCamera _cinemachineVCamera;
 
+        public PlayerController PlayerController => _playerController;
+
+        public bool isInitialized = false;
+
         public void Initialize()
         {
-            _playerController.Initialize();
+            if(isInitialized == false)
+            {
+                isInitialized = true;
+
+                _playerController.Initialize();
+                _playerController.Freeze();
+                _cinemachineVCamera.gameObject.SetActive(false);
+            }
         }
 
         public void Activate()

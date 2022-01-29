@@ -45,7 +45,7 @@ namespace UI
             _newGameFromNotFoundPopup.onClick.AddListener(_gameMaster.LoadStartLocation);
             _exit.onClick.AddListener(Application.Quit);
 
-            _gameMaster.LevelStarted += Close;
+            //_gameMaster.LevelStarted += Close;
         }
 
         private void Continue()
