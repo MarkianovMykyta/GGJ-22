@@ -205,6 +205,54 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Bottle",
+            "id": "937594bb-e9dd-4d01-b479-0930861c8bfb",
+            "actions": [
+                {
+                    "name": "Push",
+                    "type": "Button",
+                    "id": "3be5892c-5de5-4eb6-81d6-3a6bdd594c2a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pull",
+                    "type": "Button",
+                    "id": "717ccd4d-b5f2-47e0-88df-6dbd43fbef98",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "90c0dd6c-c11b-4dc7-86a7-db81393fec3c",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Push",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "92bcd47f-8bb9-476d-8d72-8d36bf102572",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pull",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

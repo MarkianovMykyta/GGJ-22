@@ -7,18 +7,18 @@ using System;
 
 namespace Souls
 {
-    [RequireComponent(typeof(NavMeshAgent))]
     public class SoulView : MonoBehaviour
     {
         public event Action Started;
         public event Action Finished;
 
         [SerializeField] private SoulManager _soulManager;
-        [SerializeField] private NavMeshAgent _navMeshAgent;
+        [SerializeField] private Rigidbody _rigidbody;
+        //[SerializeField] private NavMeshAgent _navMeshAgent;
         [Space]
         [SerializeField] private ParticleSystem _vfx;
 
-        private Soul _soul;
+        public Soul Soul;
 
         public void Initialize(Transform target, Soul soul)
         {
@@ -27,38 +27,89 @@ namespace Souls
             _vfx.Play();
 
             transform.position = target.position;
-            _soul = soul;
+            Soul = soul;
+
+            //StartCoroutine(MoveUp(target));
         }
 
-        public void MoveToTarget(Transform target, bool autoUpdate = false)
+        private IEnumerator MoveUp(Transform fromTarget)
         {
-            Started?.Invoke();
-
-            if (autoUpdate)
+            while (true)
             {
-                StartCoroutine(UpdateDestination(target));
-            }
-            else
-            {
-                _navMeshAgent.destination = transform.position;
-            }
+                _rigidbody.AddForce(Vector3.up*0.5f);
 
-            StartCoroutine(CheckDistanceAndEnter());
+                yield return null;
+
+                if (transform.position.y - fromTarget.position.y > 2f)
+                {
+                    _rigidbody.velocity = Vector3.zero;
+                    _rigidbody.isKinematic = true;
+                    break;
+                }
+            }
+        }
+
+        public void SetUnActive()
+        {
+            _rigidbody.velocity = Vector3.zero;
+            _rigidbody.isKinematic = false;
+        }
+
+        public void MoveToTarget(Vector3 toTarget)
+        {
+            StartCoroutine(MoveTo(toTarget));
+        }
+
+        private float flyTimer = 0f;
+        private IEnumerator MoveTo(Vector3 toTarget)
+        {
+            flyTimer = 0f;
+            while (true)
+            {
+                yield return null;
+
+                var directionToTarget = toTarget - transform.position;
+                StepMoveToTarget(directionToTarget.normalized);
+
+                flyTimer += Time.deltaTime;
+                if (flyTimer >= 15f)
+                {
+                    break;
+                }
+            }
+        }
+
+        public void StepMoveToTarget(Vector3 directionToTarget)
+        {
+            var offsetY = Vector3.up * UnityEngine.Random.Range(-1f, 1f) * 0.3f;
+
+            directionToTarget += offsetY;
+
+            _rigidbody.isKinematic = false;
+            _rigidbody.AddForce(directionToTarget * 50f, ForceMode.Force);
+
+            if(_rigidbody.velocity.magnitude > 5f)
+                _rigidbody.velocity = _rigidbody.velocity.normalized * 5f;
+        }
+
+        public void SetKinematic(bool v)
+        {
+            _rigidbody.isKinematic = v;
         }
 
         public void CombackToParent(bool autoUpdate = false)
         {
-            Finished += () => SetToCharacter(_soul.Parent);
+            Finished += () => SetToCharacter(Soul.Parent);
             Finished += Deactivate;
 
-            MoveToTarget(_soul.Parent.transform, autoUpdate);
+            //MoveToTarget(_soul.Parent.transform, autoUpdate);
         }
 
         public void Deactivate()
         {
             Started = null;
             Finished = null;
-            _soul = null;
+            Soul = null;
 
             _soulManager.Push(this);
 
@@ -70,30 +121,7 @@ namespace Souls
 
         public void SetToCharacter(Character character)
         {
-            character.Soul = _soul;
-        }
-
-        private IEnumerator UpdateDestination(Transform target)
-        {
-            while (true)
-            {
-                yield return new WaitForSeconds(3f);
-                _navMeshAgent.destination = transform.position;
-            }
-        }
-
-        private IEnumerator CheckDistanceAndEnter()
-        {
-            while (true)
-            {
-                if(Vector3.Distance(transform.position, _navMeshAgent.destination) <= 1f)
-                {
-                    Finished?.Invoke();
-                    break;
-                }
-            }
-
-            yield return null;
+            character.Soul = Soul;
         }
     }
 }

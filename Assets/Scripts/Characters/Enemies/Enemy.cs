@@ -2,12 +2,14 @@
 using UnityEngine;
 
 using Characters.Enemies.States;
+using UnityEngine.InputSystem;
 
 namespace Characters.Enemies
 {
     public class Enemy : Character
     {
         [SerializeField] private Animator _animator;
+        [SerializeField] private Rigidbody _rigidbody;
 
         [Header("State")]
         public EnemyState CurrentState;
@@ -23,6 +25,7 @@ namespace Characters.Enemies
         public float AttackSpeed;
 
         public Animator Animator => _animator;
+        public Rigidbody Rigidbody => _rigidbody;
 
         private void Start()
         {
@@ -53,6 +56,31 @@ namespace Characters.Enemies
             angleInDegrees += eulerY;
 
             return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
+        }
+
+        protected override void UpdateLogic()
+        {
+            base.UpdateLogic();
+            if (Keyboard.current.spaceKey.isPressed && Keyboard.current.numpad1Key.isPressed)
+            {
+                stateMachine.ChangeState(new PatrolState(this, stateMachine, context));
+            }
+            else if (Keyboard.current.spaceKey.isPressed && Keyboard.current.numpad2Key.isPressed)
+            {
+                stateMachine.ChangeState(new DeadState(this, stateMachine, context));
+            }
+
+            if(Keyboard.current.ctrlKey.isPressed && Keyboard.current.dKey.isPressed)
+            {
+                ApplyDamage(Health);
+            }
+        }
+
+        protected override void Die()
+        {
+            base.Die();
+
+            stateMachine.ChangeState(new DeadState(this, stateMachine, context));
         }
     }
 }

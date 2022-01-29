@@ -118,7 +118,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &484623931
 Transform:
   m_ObjectHideFlags: 0
@@ -755,6 +755,7 @@ MonoBehaviour:
   _slideForce: 100
   _standForce: 20
   _gravityCompensation: 1
+  _interactDistance: 0
   _head: {fileID: 2019733803886882009}
 --- !u!114 &1831576607672715180
 MonoBehaviour:
@@ -947,7 +948,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7777778, y: 1}
+    m_SensorSize: {x: 13.448276, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 1

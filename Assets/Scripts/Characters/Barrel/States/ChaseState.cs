@@ -1,11 +1,13 @@
 ﻿using Contexts;
 using System.Collections;
+using UnityEngine;
 
 namespace Characters.Barrel.States
 {
     public class ChaseState : State
     {
         private Barrel _barrel;
+        private Transform _target;
 
         public ChaseState(Barrel barrel, StateMachine stateMachine, Context context) : base(barrel, stateMachine, context)
         {
@@ -14,6 +16,7 @@ namespace Characters.Barrel.States
 
         public override void Enter()
         {
+            _target = context.Target.transform; //
             context.StartCoroutine(UpdateDestination());
         }
 
@@ -21,9 +24,9 @@ namespace Characters.Barrel.States
         {
             while (true)
             {
-                yield return new UnityEngine.WaitForSeconds(0.5f);
+                yield return new UnityEngine.WaitForSeconds(1f);
 
-                _barrel.navMeshAgent.destination = context.Target.transform.position;
+                _barrel.navMeshAgent.destination = _target.position;
             }
         }
 
