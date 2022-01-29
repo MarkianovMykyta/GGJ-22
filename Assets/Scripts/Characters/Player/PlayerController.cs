@@ -28,8 +28,6 @@ namespace Characters.Player
 		private bool IsTouchingGround => _distanceToGround <= _currentHeight;
 		private bool _isSliding;
 
-		public PlayerInputActions PlayerInput => _playerInputActions;
-
 		public void Initialize()
 		{
 			Cursor.visible = false;
