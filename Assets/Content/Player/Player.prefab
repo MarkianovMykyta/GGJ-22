@@ -300,6 +300,9 @@ MonoBehaviour:
   _animator: {fileID: 778334497}
   _camera: {fileID: 2019733803886882010}
   _collider: {fileID: 778334500}
+  _spriteRenderer: {fileID: 0}
+  _fullBottle: {fileID: 0}
+  _emptyBottle: {fileID: 0}
 --- !u!95 &778334497
 Animator:
   serializedVersion: 4
