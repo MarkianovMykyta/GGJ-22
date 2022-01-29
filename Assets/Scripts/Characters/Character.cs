@@ -51,6 +51,7 @@ namespace Characters
             if (context == null) context = FindObjectOfType<Context>();
 
             stateMachine = new StateMachine();
+            soul = new Soul(this);
 
             View = transform;
         }
@@ -72,7 +73,7 @@ namespace Characters
             stateMachine.FixedUpdate();
         }
 
-        private void Die()
+        protected virtual void Die()
         {
             if(IsDestroyed) return;
             IsDestroyed = true;

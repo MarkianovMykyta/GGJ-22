@@ -227,6 +227,54 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Bottle"",
+            ""id"": ""937594bb-e9dd-4d01-b479-0930861c8bfb"",
+            ""actions"": [
+                {
+                    ""name"": ""Push"",
+                    ""type"": ""Button"",
+                    ""id"": ""3be5892c-5de5-4eb6-81d6-3a6bdd594c2a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pull"",
+                    ""type"": ""Button"",
+                    ""id"": ""717ccd4d-b5f2-47e0-88df-6dbd43fbef98"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""90c0dd6c-c11b-4dc7-86a7-db81393fec3c"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Push"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""92bcd47f-8bb9-476d-8d72-8d36bf102572"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -239,6 +287,10 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        // Bottle
+        m_Bottle = asset.FindActionMap("Bottle", throwIfNotFound: true);
+        m_Bottle_Push = m_Bottle.FindAction("Push", throwIfNotFound: true);
+        m_Bottle_Pull = m_Bottle.FindAction("Pull", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -367,6 +419,47 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // Bottle
+    private readonly InputActionMap m_Bottle;
+    private IBottleActions m_BottleActionsCallbackInterface;
+    private readonly InputAction m_Bottle_Push;
+    private readonly InputAction m_Bottle_Pull;
+    public struct BottleActions
+    {
+        private @PlayerInputActions m_Wrapper;
+        public BottleActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Push => m_Wrapper.m_Bottle_Push;
+        public InputAction @Pull => m_Wrapper.m_Bottle_Pull;
+        public InputActionMap Get() { return m_Wrapper.m_Bottle; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(BottleActions set) { return set.Get(); }
+        public void SetCallbacks(IBottleActions instance)
+        {
+            if (m_Wrapper.m_BottleActionsCallbackInterface != null)
+            {
+                @Push.started -= m_Wrapper.m_BottleActionsCallbackInterface.OnPush;
+                @Push.performed -= m_Wrapper.m_BottleActionsCallbackInterface.OnPush;
+                @Push.canceled -= m_Wrapper.m_BottleActionsCallbackInterface.OnPush;
+                @Pull.started -= m_Wrapper.m_BottleActionsCallbackInterface.OnPull;
+                @Pull.performed -= m_Wrapper.m_BottleActionsCallbackInterface.OnPull;
+                @Pull.canceled -= m_Wrapper.m_BottleActionsCallbackInterface.OnPull;
+            }
+            m_Wrapper.m_BottleActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Push.started += instance.OnPush;
+                @Push.performed += instance.OnPush;
+                @Push.canceled += instance.OnPush;
+                @Pull.started += instance.OnPull;
+                @Pull.performed += instance.OnPull;
+                @Pull.canceled += instance.OnPull;
+            }
+        }
+    }
+    public BottleActions @Bottle => new BottleActions(this);
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -375,5 +468,10 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         void OnCrouch(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+    }
+    public interface IBottleActions
+    {
+        void OnPush(InputAction.CallbackContext context);
+        void OnPull(InputAction.CallbackContext context);
     }
 }
