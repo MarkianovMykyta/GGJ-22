@@ -746,7 +746,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerHeight: 2
-  _crouchingHeight: 1
+  _crouchingHeight: 0.7
   _moveSpeed: 6
   _stopSpeed: 0.33
   _gravityForce: 20
@@ -755,6 +755,7 @@ MonoBehaviour:
   _slideForce: 100
   _standForce: 20
   _gravityCompensation: 1
+  _interactDistance: 0
   _head: {fileID: 2019733803886882009}
 --- !u!114 &1831576607672715180
 MonoBehaviour:

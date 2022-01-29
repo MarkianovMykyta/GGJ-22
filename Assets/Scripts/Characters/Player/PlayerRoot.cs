@@ -18,8 +18,7 @@ namespace Characters.Player
 
         public void Activate()
         {
-            //InputSystem.EnableDevice(Keyboard.current);
-            _playerController.PlayerInput.Enable();
+            _playerController.UnFreeze();
             _cinemachineVCamera.gameObject.SetActive(true);
         }
 
