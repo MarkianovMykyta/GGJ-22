@@ -18,12 +18,31 @@ namespace Characters.Player
         [SerializeField] private Camera _camera;
         [SerializeField] private Collider _collider;
 
-		private float _lastAttackTime;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private Sprite _fullBottle;
+        [SerializeField] private Sprite _emptyBottle;
+        //[SerializeField] private Sprite _fullBottle;
+
+        private float _lastAttackTime;
 
 		private PlayerInputActions _playerInputActions;
 		private Context _context;
 
         private Soul _currentSoul;
+
+        public Soul CurrentSoul
+        {
+            get
+            {
+                _spriteRenderer.sprite = _emptyBottle;
+                return _currentSoul;
+            }
+            set
+            {
+                _spriteRenderer.sprite = _fullBottle;
+                _currentSoul = value;
+            }
+        }
 
         public void OnDrawGizmos()
         {
@@ -38,6 +57,7 @@ namespace Characters.Player
             _playerInputActions.Bottle.Pull.canceled += UnPull;
 
             _context = FindObjectOfType<Context>();
+            UpdateView();
 		}
 
 		private void OnEnable()
@@ -49,6 +69,11 @@ namespace Characters.Player
 		{
 			_playerInputActions.Bottle.Disable();
 		}
+
+        public void UpdateView()
+        {
+            _spriteRenderer.sprite = _currentSoul != null ? _fullBottle : _emptyBottle;
+        }
 
         private void Push(InputAction.CallbackContext obj)
         {
@@ -71,6 +96,7 @@ namespace Characters.Player
                         soulView.MoveToTarget(hit.point);
 
                         _currentSoul = null;
+                        UpdateView();
                     }
                 }
             }
@@ -113,6 +139,8 @@ namespace Characters.Player
                 soulView.SetUnActive();
                 soulView.Deactivate();
                 _context.SoulManager.Push(soulView);
+
+                UpdateView();
             }
         }
     }

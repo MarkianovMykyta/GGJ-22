@@ -29,7 +29,7 @@ namespace Souls
             transform.position = target.position;
             Soul = soul;
 
-            //StartCoroutine(MoveUp(target));
+            StartCoroutine(MoveUp(target));
         }
 
         private IEnumerator MoveUp(Transform fromTarget)

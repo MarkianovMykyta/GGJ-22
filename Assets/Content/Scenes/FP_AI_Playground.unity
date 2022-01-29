@@ -11458,6 +11458,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3322aad1504ef5c4d96c1f5a42f58986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!212 &1500810159 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 1167445114, guid: 4f66140cba6baff41b2b26116549379d,
+    type: 3}
+  m_PrefabInstance: {fileID: 2019733803629738259}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1567514559
 GameObject:
   m_ObjectHideFlags: 0
@@ -16604,7 +16610,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -16690,7 +16696,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28364
+  m_Name: pb_Mesh149908
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -22296,6 +22302,24 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 778334498, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
+      propertyPath: _fullBottle
+      value: 
+      objectReference: {fileID: 21300000, guid: ada71cc73ecc9e948af30c3be4eea737,
+        type: 3}
+    - target: {fileID: 778334498, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
+      propertyPath: _emptyBottle
+      value: 
+      objectReference: {fileID: 21300000, guid: b103d0c6e9b66aa41b2cd34eadf61185,
+        type: 3}
+    - target: {fileID: 778334498, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
+      propertyPath: _spriteRenderer
+      value: 
+      objectReference: {fileID: 1500810159}
+    - target: {fileID: 1167445112, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
+      propertyPath: m_Name
+      value: Bottle
+      objectReference: {fileID: 0}
     - target: {fileID: 2019733803923693286, guid: 4f66140cba6baff41b2b26116549379d,
         type: 3}
       propertyPath: m_RootOrder
