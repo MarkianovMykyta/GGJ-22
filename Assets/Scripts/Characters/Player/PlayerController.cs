@@ -35,7 +35,7 @@ namespace Characters.Player
 
 		[SerializeField] private SoundManager _soundManager; //temporary
 
-		public void Initialize(SoundManager soundManager)
+		public void Initialize()
 		{
 			Cursor.visible = false;
 			Cursor.lockState = CursorLockMode.Locked;
@@ -48,7 +48,6 @@ namespace Characters.Player
 			_playerInputActions.Player.Jump.performed += Jump;
 			_playerInputActions.Player.Interact.performed += Interact;
 
-			_soundManager = soundManager;
 			_footIndex = _soundManager.GetAudioClipIndex("step");
 			_jumpIndex = _soundManager.GetAudioClipIndex("jump");
 		}
@@ -63,11 +62,11 @@ namespace Characters.Player
 			_playerInputActions.Enable();
 		}
 
-		private void Awake()
+		private void Start()
 		{
 			if (GameMaster.Instance != null) return;
 
-			Initialize(_soundManager);
+			Initialize();
 		}
 
 		private void Update()

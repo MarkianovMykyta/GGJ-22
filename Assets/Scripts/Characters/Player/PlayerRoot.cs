@@ -23,12 +23,8 @@ namespace Characters.Player
             if(isInitialized == false)
             {
                 isInitialized = true;
-
-                //_inventory.Initialize(ItemType.Bottle | ItemType.None);
-                if(GameMaster.Instance != null)
-                    _soundManager = GameMaster.Instance.SoundManager;
-
-                _playerController.Initialize(_soundManager);
+                
+                _playerController.Initialize();
                 _playerController.Freeze();
                 _cinemachineVCamera.gameObject.SetActive(false);
             }
