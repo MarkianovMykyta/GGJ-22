@@ -1,6 +1,6 @@
 ﻿using Contexts;
-using Enviroment.Intractable;
 using System;
+using Environment.Intractable;
 using UnityEngine;
 
 //[Serializable]

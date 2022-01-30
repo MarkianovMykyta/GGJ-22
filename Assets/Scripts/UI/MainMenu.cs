@@ -40,6 +40,8 @@ namespace UI
 
         public void Initialize(Settings settings)
         {
+            _continue.gameObject.SetActive(_gameMaster.IsHaveSave);
+            
             _continue.onClick.AddListener(Continue);
             _applyNewGame.onClick.AddListener(_gameMaster.LoadStartLocation);
             _newGameFromNotFoundPopup.onClick.AddListener(_gameMaster.LoadStartLocation);

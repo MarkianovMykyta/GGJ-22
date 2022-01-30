@@ -15,6 +15,12 @@ EditorBuildSettings:
     path: Assets/Content/Game/1_Canalization/Canalization.unity
     guid: 3121ad35b4ea98d45a0913d8fcea8a2d
   - enabled: 1
-    path: Assets/Content/TestScenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Content/Game/2_Town/Town.unity
+    guid: a97579b8d43142248ac2d4cec242e044
+  - enabled: 1
+    path: Assets/Content/Game/3_Forest/Forest.unity
+    guid: 5b9f49e8a8bd48a4583c99ec4ec07792
+  - enabled: 1
+    path: Assets/Content/Game/4_BanditsCamp/BanditsCamp.unity
+    guid: f853482d505b34045b013787c8e1599d
   m_configObjects: {}

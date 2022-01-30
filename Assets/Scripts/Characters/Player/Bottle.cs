@@ -1,6 +1,7 @@
 ﻿using Contexts;
 using Souls;
 using System.Collections;
+using Characters.Barrel;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

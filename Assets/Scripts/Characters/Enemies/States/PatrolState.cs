@@ -1,7 +1,7 @@
 ﻿using Contexts;
-using Enviroment;
 using System.Collections;
 using System.Collections.Generic;
+using Environment;
 using UnityEngine;
 using UnityEngine.AI;
 

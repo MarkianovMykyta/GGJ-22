@@ -1,16 +1,15 @@
-﻿using UnityEngine;
-
-using Characters.Barrel.States;
+﻿using Characters.Barrel.States;
 using Souls;
-
-public interface ISoulable
-{
-    void SetSoul(Soul soul);
-    bool HasSoul();
-}
+using UnityEngine;
 
 namespace Characters.Barrel
 {
+    public interface ISoulable
+    {
+        void SetSoul(Soul soul);
+        bool HasSoul();
+    }
+
     public class Barrel : Character, ISoulable
     {
         [SerializeField] private BarrelState _currentState;

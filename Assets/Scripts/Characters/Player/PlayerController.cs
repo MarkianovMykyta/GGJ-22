@@ -17,6 +17,7 @@ namespace Characters.Player
 		[SerializeField] private float _gravityCompensation;
 		[SerializeField] private float _interactDistance;
 		[SerializeField] private Transform _head;
+		[SerializeField] private GameObject _virtualCamera;
 
 		private Rigidbody _rigidbody;
 		private PlayerInputActions _playerInputActions;
@@ -45,14 +46,16 @@ namespace Characters.Player
 		public void Freeze()
 		{
 			_playerInputActions.Disable();
+			_virtualCamera.SetActive(false);
 		}
 
 		public void UnFreeze()
 		{
 			_playerInputActions.Enable();
+			_virtualCamera.SetActive(true);
 		}
 
-		private void Awake()
+		private void Start()
 		{
 			if (GameMaster.Instance != null) return;
 

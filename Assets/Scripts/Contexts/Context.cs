@@ -1,11 +1,11 @@
 ﻿using Characters.Player;
-using Enviroment;
 using Souls;
 using System;
 using System.Collections;
 using Cinemachine;
 using Dialogs;
 using Effects;
+using Environment;
 using UnityEngine;
 
 namespace Contexts
