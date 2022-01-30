@@ -11,6 +11,15 @@ namespace Characters.Player
 		public Transform View { get; private set; }
 		public bool IsDestroyed { get; private set; }
 
+		private int _hitIndex;
+
+		private SoundManager _soundManager;
+		public void Initialize(SoundManager soundManager)
+        {
+			_soundManager = soundManager;
+			_hitIndex = _soundManager.GetAudioClipIndex("hit");
+		}
+
 		private void Awake()
 		{
 			View = transform;
@@ -21,6 +30,8 @@ namespace Characters.Player
 			if(IsDestroyed) return;
 			
 			_health -= damage;
+
+			_soundManager?.PlayAudio(_hitIndex);
 
 			if (_health <= 0)
 			{

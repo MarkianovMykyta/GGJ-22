@@ -275,6 +275,34 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Inventory"",
+            ""id"": ""b77106e0-d832-4012-aae7-bc61dd4a0e4b"",
+            ""actions"": [
+                {
+                    ""name"": ""Scroll"",
+                    ""type"": ""Value"",
+                    ""id"": ""4dafa2cd-9389-43dc-9673-5e3d6f600421"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""7df138e7-5183-47c4-98ed-fbf3ad80d0e0"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -291,6 +319,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         m_Bottle = asset.FindActionMap("Bottle", throwIfNotFound: true);
         m_Bottle_Push = m_Bottle.FindAction("Push", throwIfNotFound: true);
         m_Bottle_Pull = m_Bottle.FindAction("Pull", throwIfNotFound: true);
+        // Inventory
+        m_Inventory = asset.FindActionMap("Inventory", throwIfNotFound: true);
+        m_Inventory_Scroll = m_Inventory.FindAction("Scroll", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -460,6 +491,39 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         }
     }
     public BottleActions @Bottle => new BottleActions(this);
+
+    // Inventory
+    private readonly InputActionMap m_Inventory;
+    private IInventoryActions m_InventoryActionsCallbackInterface;
+    private readonly InputAction m_Inventory_Scroll;
+    public struct InventoryActions
+    {
+        private @PlayerInputActions m_Wrapper;
+        public InventoryActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Scroll => m_Wrapper.m_Inventory_Scroll;
+        public InputActionMap Get() { return m_Wrapper.m_Inventory; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(InventoryActions set) { return set.Get(); }
+        public void SetCallbacks(IInventoryActions instance)
+        {
+            if (m_Wrapper.m_InventoryActionsCallbackInterface != null)
+            {
+                @Scroll.started -= m_Wrapper.m_InventoryActionsCallbackInterface.OnScroll;
+                @Scroll.performed -= m_Wrapper.m_InventoryActionsCallbackInterface.OnScroll;
+                @Scroll.canceled -= m_Wrapper.m_InventoryActionsCallbackInterface.OnScroll;
+            }
+            m_Wrapper.m_InventoryActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Scroll.started += instance.OnScroll;
+                @Scroll.performed += instance.OnScroll;
+                @Scroll.canceled += instance.OnScroll;
+            }
+        }
+    }
+    public InventoryActions @Inventory => new InventoryActions(this);
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -473,5 +537,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
     {
         void OnPush(InputAction.CallbackContext context);
         void OnPull(InputAction.CallbackContext context);
+    }
+    public interface IInventoryActions
+    {
+        void OnScroll(InputAction.CallbackContext context);
     }
 }

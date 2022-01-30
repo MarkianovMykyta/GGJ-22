@@ -17,6 +17,8 @@ namespace Characters.Player
 		[SerializeField] private float _gravityCompensation;
 		[SerializeField] private float _interactDistance;
 		[SerializeField] private Transform _head;
+		[SerializeField] private float _period;
+		[SerializeField] private AnimationCurve _curve;
 
 		private Rigidbody _rigidbody;
 		private PlayerInputActions _playerInputActions;
@@ -28,7 +30,12 @@ namespace Characters.Player
 		private bool IsTouchingGround => _distanceToGround <= _currentHeight;
 		private bool _isSliding;
 
-		public void Initialize()
+		private int _footIndex;
+		private int _jumpIndex;
+
+		[SerializeField] private SoundManager _soundManager; //temporary
+
+		public void Initialize(SoundManager soundManager)
 		{
 			Cursor.visible = false;
 			Cursor.lockState = CursorLockMode.Locked;
@@ -40,6 +47,10 @@ namespace Characters.Player
 
 			_playerInputActions.Player.Jump.performed += Jump;
 			_playerInputActions.Player.Interact.performed += Interact;
+
+			_soundManager = soundManager;
+			_footIndex = _soundManager.GetAudioClipIndex("step");
+			_jumpIndex = _soundManager.GetAudioClipIndex("jump");
 		}
 
 		public void Freeze()
@@ -56,7 +67,7 @@ namespace Characters.Player
 		{
 			if (GameMaster.Instance != null) return;
 
-			Initialize();
+			Initialize(_soundManager);
 		}
 
 		private void Update()
@@ -75,7 +86,22 @@ namespace Characters.Player
 			UpdatePlayerLayer();
 		}
 
-		private void Crouch()
+		private float _timer = 0f;
+        private void PlayFootStep(float soundPower)
+        {
+			if(_soundManager != null)
+            {
+				var period = _curve.Evaluate(soundPower);
+				_timer += Time.deltaTime;
+				if(_timer >= period && period != 0 && period <= 1)
+				{
+					_timer = 0f;
+					_soundManager.PlayAudio(_footIndex);
+				}
+			}
+        }
+
+        private void Crouch()
 		{
 			var isCrouching = _playerInputActions.Player.Crouch.IsPressed();
 			if (isCrouching)
@@ -170,6 +196,9 @@ namespace Characters.Player
 				var newVelocity = (characterForwardDir * moveInput.y + _head.right * moveInput.x).normalized * speed;
 
 				horizontalVelocity = Vector3.Lerp(horizontalVelocity, newVelocity, _stopSpeed);
+
+				var soundPower = _distanceToGround <= _playerHeight ? (_distanceToGround / _playerHeight) - 0.1f : 0f;
+				PlayFootStep(soundPower);
 			}
 
 			horizontalVelocity.y = currentVelocity.y;
@@ -183,6 +212,8 @@ namespace Characters.Player
 			if (_distanceToGround <= _currentHeight + 0.1f)
 			{
 				_rigidbody.velocity += (Vector3.up + _rigidbody.velocity.normalized).normalized * _jumpForce;
+
+				_soundManager?.PlayAudio(_jumpIndex);
 			}
 		}
 

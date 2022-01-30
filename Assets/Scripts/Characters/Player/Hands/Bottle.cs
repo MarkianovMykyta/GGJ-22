@@ -6,9 +6,17 @@ using UnityEngine.InputSystem;
 
 namespace Characters.Player
 {
-    public class Bottle : MonoBehaviour
+    [System.Serializable]
+    public abstract class HandableItem : MonoBehaviour
     {
-		private static readonly int PushID = Animator.StringToHash("Push");
+        public abstract ItemType ItemType { get; }
+    }
+
+    public class Bottle : HandableItem
+    {
+        private const ItemType _itemType = ItemType.Bottle;
+
+        private static readonly int PushID = Animator.StringToHash("Push");
 		private static readonly int PullID = Animator.StringToHash("Pull");
 
 		[SerializeField] private int _damage;
@@ -17,11 +25,14 @@ namespace Characters.Player
 		[SerializeField] private Animator _animator;
         [SerializeField] private Camera _camera;
         [SerializeField] private Collider _collider;
+        [SerializeField] private Transform _spawnTranform;
 
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private Sprite _fullBottle;
         [SerializeField] private Sprite _emptyBottle;
         //[SerializeField] private Sprite _fullBottle;
+
+        public override ItemType ItemType { get => _itemType; }
 
         private float _lastAttackTime;
 
@@ -43,6 +54,7 @@ namespace Characters.Player
                 _currentSoul = value;
             }
         }
+
 
         public void OnDrawGizmos()
         {
@@ -92,7 +104,7 @@ namespace Characters.Player
                         StartCoroutine(ActivatePushBlocker());
                         var soulView = _context.SoulManager.Pop();
                         //soulView.transform.position = transform.position;
-                        soulView.Initialize(transform, _currentSoul);
+                        soulView.Initialize(_spawnTranform, _currentSoul);
                         soulView.MoveToTarget(hit.point);
 
                         _currentSoul = null;
@@ -125,7 +137,7 @@ namespace Characters.Player
         {
             if (_playerInputActions.Bottle.Pull.IsPressed() && _currentSoul == null)
             {
-                _context.SoulManager.MoveActiveSouls(transform, _bottleRange);
+                _context.SoulManager.MoveActiveSouls(_spawnTranform, _bottleRange);
             }
         }
 

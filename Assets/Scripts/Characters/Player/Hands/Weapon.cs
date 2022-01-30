@@ -5,8 +5,10 @@ using UnityEngine.InputSystem;
 
 namespace Characters.Player
 {
-	public class Weapon : MonoBehaviour
+	public class Weapon : HandableItem
 	{
+		private const ItemType _itemType = ItemType.Dagger;
+
 		private static readonly int Attack1 = Animator.StringToHash("Attack");
 		
 		[SerializeField] private int _damage;
@@ -16,11 +18,12 @@ namespace Characters.Player
 
 		private float _lastAttackTime;
 
-
 		private PlayerInputActions _playerInputActions;
 		private Context _context;
 
-		private void Awake()
+		public override ItemType ItemType { get => _itemType; }
+
+        private void Awake()
 		{
 			_playerInputActions = new PlayerInputActions();
 			_playerInputActions.Player.Attack.performed += Attack;
