@@ -3956,18 +3956,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!114 &214833508 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1983645312599265199, guid: c404a06ecfee5a44eab181609e8c6a6c,
-    type: 3}
-  m_PrefabInstance: {fileID: 368913461}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46b631051a304b01b55d55d22f7bd9cc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!43 &217585083
 Mesh:
   m_ObjectHideFlags: 0
@@ -14900,11 +14888,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
       propertyPath: m_Pivot.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
       propertyPath: m_Pivot.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
       propertyPath: m_SizeDelta.x
@@ -14912,43 +14900,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 1080
       objectReference: {fileID: 0}
     - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
-      propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -33.208874
+      objectReference: {fileID: 0}
+    - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.00000058114523
+      objectReference: {fileID: 0}
+    - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -967.50006
       objectReference: {fileID: 0}
     - target: {fileID: 123786033, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 539.05
       objectReference: {fileID: 0}
     - target: {fileID: 311912327, guid: 4f66140cba6baff41b2b26116549379d, type: 3}
       propertyPath: m_AnchorMax.y
@@ -22617,7 +22605,6 @@ MonoBehaviour:
   Target: {fileID: 0}
   SoulManager: {fileID: 0}
   EffectsManager: {fileID: 0}
-  DialogManager: {fileID: 214833508}
   PlayerRoot: {fileID: 790750873}
 --- !u!43 &1435340485
 Mesh:

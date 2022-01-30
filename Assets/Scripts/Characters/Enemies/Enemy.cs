@@ -29,7 +29,7 @@ namespace Characters.Enemies
 
         private void Start()
         {
-            stateMachine.ChangeState(new IdleState(this, stateMachine, context));
+            stateMachine.ChangeState(new PatrolState(this, stateMachine, context));
         }
 
         private void OnDrawGizmos()
@@ -61,19 +61,20 @@ namespace Characters.Enemies
         protected override void UpdateLogic()
         {
             base.UpdateLogic();
-            if (Keyboard.current.spaceKey.isPressed && Keyboard.current.numpad1Key.isPressed)
-            {
-                stateMachine.ChangeState(new PatrolState(this, stateMachine, context));
-            }
-            else if (Keyboard.current.spaceKey.isPressed && Keyboard.current.numpad2Key.isPressed)
-            {
-                stateMachine.ChangeState(new DeadState(this, stateMachine, context));
-            }
-
-            if(Keyboard.current.ctrlKey.isPressed && Keyboard.current.dKey.isPressed)
-            {
-                ApplyDamage(Health);
-            }
+            
+            // if (Keyboard.current.spaceKey.isPressed && Keyboard.current.numpad1Key.isPressed)
+            // {
+            //     stateMachine.ChangeState(new PatrolState(this, stateMachine, context));
+            // }
+            // else if (Keyboard.current.spaceKey.isPressed && Keyboard.current.numpad2Key.isPressed)
+            // {
+            //     stateMachine.ChangeState(new DeadState(this, stateMachine, context));
+            // }
+            //
+            // if(Keyboard.current.ctrlKey.isPressed && Keyboard.current.dKey.isPressed)
+            // {
+            //     ApplyDamage(Health);
+            // }
         }
 
         protected override void Die()

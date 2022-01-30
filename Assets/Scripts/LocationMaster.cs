@@ -25,7 +25,7 @@ public class LocationMaster : MonoBehaviour
     public Context Context => _context;
     public LocationType LocationType => _locationType;
 
-    private void Awake()
+    private void Start()
     {
         DefineGameMaster();
     }

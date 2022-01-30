@@ -15,7 +15,7 @@ namespace Dialogs
 		
 		private void Awake()
 		{
-			_dialogManager = FindObjectOfType<Context>().DialogManager;
+			_dialogManager = GameMaster.Instance.DialogManager;
 		}
 
 		public void Interact(PlayerController playerController)

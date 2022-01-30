@@ -16,7 +16,6 @@ namespace Contexts
         public GameObject Target;
         public SoulManager SoulManager;
         public EffectsManager EffectsManager;
-        public DialogManager DialogManager;
 
         public PlayerRoot PlayerRoot;
         //public GameObject PlayerGO;

@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Dialogs;
 using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -90,6 +91,8 @@ public class GameMaster : MonoBehaviour
             return _soundManger;
         }
     }
+
+    public DialogManager DialogManager;
 
     #region Monobehaviour Methods
 

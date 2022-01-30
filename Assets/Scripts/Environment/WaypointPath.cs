@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Environment
 {
-    [ExecuteInEditMode]
+    //[ExecuteInEditMode]
     public class WaypointPath : MonoBehaviour
     {
         public List<Waypoint> Waypoints => _waypoints;
@@ -26,7 +26,7 @@ namespace Environment
 
         private void Update()
         {
-            _waypoints = GetComponentsInChildren<Waypoint>().ToList();
+            //_waypoints = GetComponentsInChildren<Waypoint>().ToList();
         }
 #endif
     }
