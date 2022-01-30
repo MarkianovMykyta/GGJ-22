@@ -6,10 +6,13 @@ using UnityEngine.InputSystem;
 
 namespace Characters.Player
 {
+
     public class PlayerRoot : MonoBehaviour
     {
         [SerializeField] private PlayerController _playerController;
         [SerializeField] private CinemachineVirtualCamera _cinemachineVCamera;
+        [SerializeField] private Inventory _inventory;
+        [SerializeField] private SoundManager _soundManager; //gameMaster
 
         public PlayerController PlayerController => _playerController;
 
@@ -21,7 +24,11 @@ namespace Characters.Player
             {
                 isInitialized = true;
 
-                _playerController.Initialize();
+                //_inventory.Initialize(ItemType.Bottle | ItemType.None);
+                if(GameMaster.Instance != null)
+                    _soundManager = GameMaster.Instance.SoundManager;
+
+                _playerController.Initialize(_soundManager);
                 _playerController.Freeze();
                 _cinemachineVCamera.gameObject.SetActive(false);
             }

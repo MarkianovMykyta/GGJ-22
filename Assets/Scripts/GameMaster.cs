@@ -14,16 +14,16 @@ public enum LocationType
     Canalization,
     Town2,
     Forest,
-    BanditHome,
+    BanditCamp,
     Mountain,
 };
 
 [System.Flags]
 public enum ItemType
 {
-    None,
-    Bottle,
-    Dagger,
+    None = 0,
+    Bottle = 1,
+    Dagger = 2,
 };
 
 public class GameMaster : MonoBehaviour
@@ -42,6 +42,7 @@ public class GameMaster : MonoBehaviour
 
     [Header("Player")]
     [SerializeField] private PlayerRoot _playerRootPrefab;
+    [SerializeField] private SoundManager _soundManger;
 
     private PlayerWrapper _playerWrapper;
     private LevelManager _levelManager;
@@ -79,6 +80,14 @@ public class GameMaster : MonoBehaviour
             }
 
             return _playerRoot;
+        }
+    }
+
+    public SoundManager SoundManager
+    {
+        get
+        {
+            return _soundManger;
         }
     }
 

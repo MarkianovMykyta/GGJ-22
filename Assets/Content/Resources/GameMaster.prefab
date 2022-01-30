@@ -285,6 +285,7 @@ MonoBehaviour:
   _cleanStart: 0
   _playerRootPrefab: {fileID: 3350208350620225278, guid: 4f66140cba6baff41b2b26116549379d,
     type: 3}
+  _soundManger: {fileID: 0}
 --- !u!1 &6717108876089045432
 GameObject:
   m_ObjectHideFlags: 0
